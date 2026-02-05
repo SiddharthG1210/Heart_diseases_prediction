@@ -29,28 +29,6 @@ Frontend: HTML, CSS, JavaScript
 
 Environment Management: Python venv
 
-📁 Project Structure
-disease_prediction_app/
-│
-├── app.py                     # Main Flask application
-├── requirements.txt           # Python dependencies
-├── .gitignore
-│
-├── models/                    # Trained ML models (.pkl)
-│   ├── *.pkl
-│
-├── templates/                 # HTML templates
-│   ├── index.html
-│   ├── login.html
-│   ├── register.html
-│   ├── *.html
-│
-├── static/                    # CSS, JS, images
-│   ├── style.css
-│   ├── script.js
-│   └── *.png / *.jfif
-│
-└── .venv/                     # Virtual environment (ignored by Git)
 
 ⚙️ Setup Instructions
 1️⃣ Clone the repository

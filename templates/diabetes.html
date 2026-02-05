@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            padding-bottom: 3rem;
+        }
+        .header {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .header h1 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+        .form-container:hover {
+            transform: translateY(-4px);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.05rem;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.2s ease;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #4a5568;
+            background-color: #f7fafc;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-group input:focus {
+            border-color: #2b6cb0;
+            box-shadow: 0 0 0 4px rgba(43, 108, 176, 0.2);
+            outline: none;
+        }
+        .form-group input:invalid {
+            border-color: #e53e3e;
+        }
+        .form-group small {
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 0.9rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background-color: #2b6cb0;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #1a4971;
+            transform: translateY(-2px);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        .info-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 900px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .info-section h3 {
+            color: #2b6cb0;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.75rem;
+        }
+        .info-card {
+            background-color: #f8f9ff;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #4e73df;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        .info-card h4 {
+            color: #2d3748;
+            font-size: 1.15rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        .info-card p {
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        .info-card .normal-range {
+            font-weight: 600;
+            color: #38a169;
+            margin-top: 0.5rem;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background-color: #e2e8f0;
+            border-radius: 12px 12px 0 0;
+        }
+        .footer p {
+            color: #4a5568;
+            margin-bottom: 0;
+        }
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            .form-group input {
+                padding: 0.65rem 0.9rem;
+            }
+            .btn-primary {
+                padding: 0.8rem;
+                font-size: 1rem;
+            }
+            .info-section {
+                padding: 1.5rem;
+                margin: 1.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header text-center">
+        <div class="container">
+            <h1>Diabetes Risk Assessment Tool</h1>
+            <p>Enter your health metrics below to evaluate your risk of developing diabetes. This prediction model uses the Pima Indians Diabetes Dataset.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-container">
+            <h2 class="text-center mb-4">Input Your Health Data</h2>
+            
+            <form action="{{ url_for('diabetes_predict') }}" method="POST" onsubmit="return validateForm(event)">
+                <div class="form-group">
+                    <label for="pregnancies">Pregnancies:</label>
+                    <input type="number" id="pregnancies" name="pregnancies" required class="form-control" min="0" max="20">
+                    <small id="pregnancies-warning" class="text-danger" style="display: none;">Must be between 0 and 20.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="glucose">Glucose (mg/dL):</label>
+                    <input type="number" id="glucose" name="glucose" required class="form-control" min="50" max="300">
+                    <small id="glucose-warning" class="text-danger" style="display: none;">Must be between 50 and 300 mg/dL.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="blood_pressure">Blood Pressure (mmHg):</label>
+                    <input type="number" id="blood_pressure" name="blood_pressure" required class="form-control" min="40" max="200">
+                    <small id="blood_pressure-warning" class="text-danger" style="display: none;">Must be between 40 and 200 mmHg.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="skin_thickness">Skin Thickness (mm):</label>
+                    <input type="number" id="skin_thickness" name="skin_thickness" required class="form-control" min="0" max="99">
+                    <small id="skin-thickness-warning" class="text-danger" style="display: none;">Must be between 0 and 99 mm.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="insulin">Insulin (µIU/mL):</label>
+                    <input type="number" id="insulin" name="insulin" required class="form-control" min="0" max="1000">
+                    <small id="insulin-warning" class="text-danger" style="display: none;">Must be between 0 and 1000 µIU/mL.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="bmi">BMI:</label>
+                    <input type="number" step="0.1" id="bmi" name="bmi" required class="form-control" min="10" max="80">
+                    <small id="bmi-warning" class="text-danger" style="display: none;">Must be between 10 and 80.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="diabetes_pedigree">Diabetes Pedigree Function:</label>
+                    <input type="number" step="0.01" id="diabetes_pedigree" name="diabetes_pedigree" required class="form-control" min="0.0" max="2.5">
+                    <small id="diabetes-pedigree-warning" class="text-danger" style="display: none;">Must be between 0.0 and 2.5.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" name="age" required class="form-control" min="15" max="80">
+                    <small id="age-warning" class="text-danger" style="display: none;">Must be between 15 and 80.</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block mt-3">Predict</button>
+            </form>
+        </div>
+
+        <div class="info-section">
+            <h3 class="text-center">Understanding Risk Factors for Diabetes</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="info-card">
+                        <h4>Pregnancies</h4>
+                        <p>Research shows that women who have had multiple pregnancies may have a higher risk of developing type 2 diabetes. This is partly due to the insulin resistance that naturally occurs during pregnancy.</p>
+                        <p class="normal-range">Impact: Each pregnancy can slightly increase long-term diabetes risk.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="info-card">
+                        <h4>Glucose Level</h4>
+                        <p>Blood glucose concentration is one of the most direct indicators of diabetes risk. Consistently elevated glucose levels suggest the body's inability to properly regulate blood sugar.</p>
+                        <p class="normal-range">Normal range: Fasting glucose below 100 mg/dL; Values above 126 mg/dL may indicate diabetes.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="info-card">
+                        <h4>Blood Pressure</h4>
+                        <p>Hypertension (high blood pressure) often co-occurs with diabetes. Both conditions affect the cardiovascular system and can influence each other's progression.</p>
+                        <p class="normal-range">Normal range: Below 120/80 mmHg; Values above 140/90 mmHg indicate hypertension.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="info-card">
+                        <h4>Skin Thickness</h4>
+                        <p>Skin thickness at the triceps is a measure that can indicate subcutaneous fat levels. It's used as an additional anthropometric measure to assess body composition and fat distribution.</p>
+                        <p class="normal-range">Typical range: 15-35 mm, though varies by age, gender, and fitness level.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="info-card">
+                        <h4>Insulin Level</h4>
+                        <p>Insulin is the hormone responsible for regulating blood glucose. Abnormal insulin levels can indicate insulin resistance or insufficient insulin production - both key factors in diabetes.</p>
+                        <p class="normal-range">Normal fasting range: 3-25 µIU/mL; Higher levels may indicate insulin resistance.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="info-card">
+                        <h4>BMI (Body Mass Index)</h4>
+                        <p>BMI is a calculation of body weight relative to height. Higher BMI values are strongly correlated with increased diabetes risk, particularly for type 2 diabetes.</p>
+                        <p class="normal-range">Normal range: 18.5-24.9; 25-29.9 is overweight; 30+ is classified as obese.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="info-card">
+                        <h4>Diabetes Pedigree Function</h4>
+                        <p>This function scores the likelihood of diabetes based on family history, taking into account the relationship and age of diagnosis of diabetic family members.</p>
+                        <p class="normal-range">Higher values indicate stronger genetic predisposition to diabetes.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="info-card">
+                        <h4>Age</h4>
+                        <p>The risk of developing type 2 diabetes increases with age, particularly after 45. This is due to factors like decreasing physical activity, weight gain, and natural changes in pancreatic function.</p>
+                        <p class="normal-range">Risk increases significantly after age 45.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h3 class="text-center">About the Diabetes Prediction Model</h3>
+            <p>This prediction tool uses machine learning algorithms trained on medical data to estimate diabetes risk. The model analyzes your input values and compares them against patterns identified in patients with and without diabetes.</p>
+            <p>Remember that this tool provides an estimate only and should not replace professional medical advice. If you receive a high-risk prediction or have concerns about diabetes, consult with a healthcare provider for proper testing and diagnosis.</p>
+            
+            <div class="mt-4">
+                <h4>Preventive Measures</h4>
+                <ul>
+                    <li>Maintain a healthy weight through balanced nutrition</li>
+                    <li>Engage in regular physical activity (at least 150 minutes per week)</li>
+                    <li>Limit refined carbohydrates and added sugars</li>
+                    <li>Increase fiber intake through fruits, vegetables, and whole grains</li>
+                    <li>Monitor blood pressure and cholesterol levels</li>
+                    <li>Avoid smoking and limit alcohol consumption</li>
+                    <li>Get regular health check-ups, especially if you have risk factors</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="container">
+            <p>This diabetes prediction tool is for educational purposes only. Always consult healthcare professionals for medical advice.</p>
+        </div>
+    </div>
+
+    <script>
+        function validateForm(event) {
+            let valid = true;
+
+            function checkInput(id, warningId, min, max) {
+                let input = document.getElementById(id);
+                let warning = document.getElementById(warningId);
+                if (input.value < min || input.value > max) {
+                    warning.style.display = "block";
+                    valid = false;
+                } else {
+                    warning.style.display = "none";
+                }
+            }
+
+            checkInput("pregnancies", "pregnancies-warning", 0, 20);
+            checkInput("glucose", "glucose-warning", 50, 300);
+            checkInput("blood_pressure", "blood_pressure-warning", 40, 200);
+            checkInput("skin_thickness", "skin-thickness-warning", 0, 99);
+            checkInput("insulin", "insulin-warning", 0, 1000);
+            checkInput("bmi", "bmi-warning", 10, 80);
+            checkInput("diabetes_pedigree", "diabetes-pedigree-warning", 0.0, 2.5);
+            checkInput("age", "age-warning", 15, 80);
+
+            if (!valid) {
+                event.preventDefault(); // Stop form submission if invalid
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

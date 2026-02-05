@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Attack Risk Assessment</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Keeping original form styles intact */
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .prediction-form {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+        .prediction-form:hover {
+            transform: translateY(-4px);
+        }
+        .prediction-form label {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.05rem;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.2s ease;
+        }
+        .prediction-form input,
+        .prediction-form select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #4a5568;
+            background-color: #f7fafc;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .prediction-form input:focus,
+        .prediction-form select:focus {
+            border-color: #2b6cb0;
+            box-shadow: 0 0 0 4px rgba(43, 108, 176, 0.2);
+            outline: none;
+        }
+        .prediction-form input:invalid,
+        .prediction-form select:invalid {
+            border-color: #e53e3e;
+        }
+        .predict-button {
+            width: 100%;
+            padding: 0.9rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background-color: #2b6cb0;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .predict-button:hover {
+            background-color: #1a4971;
+            transform: translateY(-2px);
+        }
+        .predict-button:active {
+            transform: translateY(0);
+        }
+        @media (max-width: 600px) {
+            .prediction-form {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            .prediction-form input,
+            .prediction-form select {
+                padding: 0.65rem 0.9rem;
+            }
+            .predict-button {
+                padding: 0.8rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* New styles for enhanced page */
+        body {
+            background-color: #f0f5ff;
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .page-header {
+            background: linear-gradient(135deg, #2b6cb0 0%, #1c4e80 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #2b6cb0;
+        }
+        .info-section {
+            margin: 3rem 0;
+        }
+        .factor-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .factor-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        .factor-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            border-color: #2b6cb0;
+        }
+        .factor-icon {
+            font-size: 2rem;
+            color: #2b6cb0;
+            margin-bottom: 0.5rem;
+        }
+        .footer {
+            background-color: #2d3748;
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        .disclaimer {
+            font-size: 0.9rem;
+            font-style: italic;
+            color: #666;
+            background-color: #f7f7f7;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="page-header">
+        <div class="main-container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1>Heart Attack Risk Assessment</h1>
+                    <p class="lead">Evaluate your cardiovascular health with our predictive tool based on medical factors</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <img src="/api/placeholder/150/150" alt="Heart health icon" class="img-fluid" style="max-width: 100px;">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="row">
+            <div class="col-lg-6">
+                <!-- Info Card -->
+                <div class="info-card mb-4">
+                    <h3>Why Use This Tool?</h3>
+                    <p>This assessment tool analyzes key cardiovascular health indicators to estimate your risk of heart disease. Early identification of risk factors can lead to timely intervention and prevention.</p>
+                    <p><strong>Note:</strong> This tool provides an estimate only and should not replace professional medical advice.</p>
+                </div>
+                
+                <!-- Original Form Container (Keeping CSS intact) -->
+                <div class="container">
+                    <h2 class="title text-center">Heart Attack Prediction</h2>
+                    <form action="{{ url_for('predict_heart_attack') }}" method="post" class="prediction-form">
+                        
+                        <label>Age:</label>
+                        <input type="number" name="age" required>
+
+                        <label>Resting Blood Pressure (trestbps):</label>
+                        <input type="number" name="trestbps" required>
+
+                        <label>Cholesterol (chol):</label>
+                        <input type="number" name="chol" required>
+
+                        <label>Max Heart Rate (thalach):</label>
+                        <input type="number" name="thalach" required>
+
+                        <label>Oldpeak (ST depression):</label>
+                        <input type="number" step="0.1" name="oldpeak" required>
+
+                        <label>Sex:</label>
+                        <select name="sex">
+                            <option value="1">Male</option>
+                            <option value="0">Female</option>
+                        </select>
+
+                        <label>Chest Pain Type (cp):</label>
+                        <select name="cp">
+                            <option value="0">Typical Angina</option>
+                            <option value="1">Atypical Angina</option>
+                            <option value="2">Non-anginal Pain</option>
+                            <option value="3">Asymptomatic</option>
+                        </select>
+
+                        <label>Fasting Blood Sugar > 120 mg/dl (fbs):</label>
+                        <select name="fbs">
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+
+                        <label>Resting ECG Results (restecg):</label>
+                        <select name="restecg">
+                            <option value="0">Normal</option>
+                            <option value="1">ST-T Wave Abnormality</option>
+                            <option value="2">Left Ventricular Hypertrophy</option>
+                        </select>
+
+                        <label>Exercise-Induced Angina (exang):</label>
+                        <select name="exang">
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+
+                        <label>Slope of ST Segment (slope):</label>
+                        <select name="slope">
+                            <option value="0">Upsloping</option>
+                            <option value="1">Flat</option>
+                            <option value="2">Downsloping</option>
+                        </select>
+
+                        <label>Number of Major Vessels (ca):</label>
+                        <select name="ca">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+
+                        <label>Thalassemia (thal):</label>
+                        <select name="thal">
+                            <option value="1">Normal</option>
+                            <option value="2">Fixed Defect</option>
+                            <option value="3">Reversible Defect</option>
+                        </select>
+
+                        <button type="submit" class="predict-button">Predict</button>
+                    </form>
+                </div>
+                
+                <!-- Disclaimer -->
+                <div class="disclaimer">
+                    This tool is for educational purposes only. Always consult with a healthcare professional for medical advice, diagnosis, or treatment.
+                </div>
+            </div>
+            
+            <!-- Information Section -->
+            <div class="col-lg-6">
+                <div class="factor-section">
+                    <h3 class="mb-4">Understanding Heart Attack Risk Factors</h3>
+                    
+                    <div class="factor-card">
+                        <h4>Age</h4>
+                        <p>As age increases, so does the risk of heart disease. About 80% of people who die of coronary heart disease are 65 or older.</p>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <h4>Blood Pressure (trestbps)</h4>
+                        <p>High blood pressure can damage arteries that feed your heart by making them less elastic, decreasing blood and oxygen flow to your heart. Normal range is typically below 120/80 mmHg.</p>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <h4>Cholesterol (chol)</h4>
+                        <p>High levels of cholesterol can increase your risk of heart disease. LDL (bad) cholesterol contributes to plaque buildup in arteries, while HDL (good) cholesterol helps remove LDL from the bloodstream.</p>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <h4>Maximum Heart Rate (thalach)</h4>
+                        <p>Maximum heart rate achieved during exercise testing. A lower-than-expected maximum heart rate during peak exercise can indicate heart problems.</p>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <h4>ST Depression (oldpeak)</h4>
+                        <p>ST depression induced by exercise relative to rest indicates reduced blood flow to the heart (ischemia). Higher values suggest increased risk.</p>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <h4>Sex</h4>
+                        <p>Men generally have a higher risk of heart disease. However, after menopause, women's risk increases to match men's risk.</p>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <h4>Chest Pain Type (cp)</h4>
+                        <p><strong>Typical angina:</strong> Classic chest pain triggered by physical or emotional stress.<br>
+                        <strong>Atypical angina:</strong> Chest pain not fitting typical patterns.<br>
+                        <strong>Non-anginal pain:</strong> Chest pain unrelated to heart.<br>
+                        <strong>Asymptomatic:</strong> No chest pain symptoms despite underlying heart issues.</p>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <h4>Fasting Blood Sugar (fbs)</h4>
+                        <p>Elevated blood sugar (>120 mg/dl) can indicate diabetes, which significantly increases heart disease risk by damaging blood vessels and nerves that control the heart.</p>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <h4>Resting ECG Results (restecg)</h4>
+                        <p>Electrocardiogram measurements taken at rest can reveal heart abnormalities even when you're not experiencing symptoms.</p>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <h4>Exercise-Induced Angina (exang)</h4>
+                        <p>Chest pain during physical activity suggests that your heart muscle isn't getting enough blood flow, indicating a higher risk of coronary artery disease.</p>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <h4>Slope of ST Segment (slope)</h4>
+                        <p>The shape of the ST segment on an ECG during exercise. Downsloping patterns are typically associated with higher risk compared to upsloping or flat patterns.</p>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <h4>Number of Major Vessels (ca)</h4>
+                        <p>The number of major blood vessels (0-4) with significant narrowing as revealed by fluoroscopy. More affected vessels indicate more extensive heart disease.</p>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <h4>Thalassemia (thal)</h4>
+                        <p>A blood disorder that affects the body's ability to produce hemoglobin. Certain types can impact heart health and increase the risk of coronary artery disease.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Prevention Section -->
+        <div class="info-section">
+            <h3 class="mb-4">Preventive Measures for Heart Health</h3>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="factor-card h-100">
+                        <h5>Physical Activity</h5>
+                        <p>Aim for at least 150 minutes of moderate-intensity exercise per week to help maintain heart health.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="factor-card h-100">
+                        <h5>Healthy Diet</h5>
+                        <p>Focus on fruits, vegetables, whole grains, lean proteins, and limit saturated fats, sodium, and added sugars.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="factor-card h-100">
+                        <h5>Regular Check-ups</h5>
+                        <p>Monitor your blood pressure, cholesterol, and blood sugar levels regularly through medical check-ups.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="main-container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Heart Attack Risk Assessment</h4>
+                    <p>This tool is based on clinical data and recognized cardiac risk factors.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>© 2025 CardioSense. All rights reserved.</p>
+                    <p>For medical emergencies, please call 911 immediately.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

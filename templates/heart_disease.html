@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Disease Prediction</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2b6cb0;
+            --accent-color: #1a4971;
+            --light-bg: #f8fafc;
+            --text-color: #2d3748;
+            --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4ecfb 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-bottom: 4rem;
+        }
+
+        .page-header {
+            background-color: #ffffff;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-right: 1rem;
+        }
+
+        .site-title {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--text-color);
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2.5rem;
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        /* Your existing form styles */
+        .needs-validation {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+        .needs-validation:hover {
+            transform: translateY(-4px);
+        }
+        .needs-validation .form-label {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.05rem;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.2s ease;
+        }
+        .needs-validation .form-control,
+        .needs-validation .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #4a5568;
+            background-color: #f7fafc;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .needs-validation .form-control:focus,
+        .needs-validation .form-select:focus {
+            border-color: #2b6cb0;
+            box-shadow: 0 0 0 4px rgba(43, 108, 176, 0.2);
+            outline: none;
+        }
+        .needs-validation .form-control:invalid,
+        .needs-validation .form-select:invalid {
+            border-color: #e53e3e;
+        }
+        .needs-validation .btn-primary {
+            width: 100%;
+            padding: 0.9rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background-color: #2b6cb0;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .needs-validation .btn-primary:hover {
+            background-color: #1a4971;
+            transform: translateY(-2px);
+        }
+        .needs-validation .btn-primary:active {
+            transform: translateY(0);
+        }
+        @media (max-width: 600px) {
+            .needs-validation {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            .needs-validation .form-control,
+            .needs-validation .form-select {
+                padding: 0.65rem 0.9rem;
+            }
+            .needs-validation .btn-primary {
+                padding: 0.8rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* Information section styles */
+        .info-section {
+            margin-top: 3rem;
+            padding: 0 1rem;
+        }
+
+        .info-title {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            font-size: 2rem;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+
+        .info-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+
+        .factor-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+        
+        .factor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .factor-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .factor-title i {
+            margin-right: 0.75rem;
+            background-color: rgba(43, 108, 176, 0.1);
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: var(--primary-color);
+        }
+
+        .factor-description {
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        .normal-range {
+            display: inline-block;
+            background-color: #e6f4ea;
+            color: #1e7e34;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            margin-top: 0.75rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .risk-factor {
+            display: inline-block;
+            background-color: #ffeaea;
+            color: #dc3545;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: 3rem;
+        }
+
+        .disclaimer {
+            max-width: 800px;
+            margin: 2rem auto;
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem 1.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .row-cols-md-3 > * {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo {
+                margin-bottom: 1rem;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="page-header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <h1 class="site-title">CardioSense</h1>
+            </div>
+            <p class="d-none d-md-block mb-0">Early detection can save lives. Take the first step today.</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header text-center">
+                <h2>Heart Disease Prediction</h2>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('predict') }}" method="POST" class="needs-validation" novalidate>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="age" class="form-label">Age:</label>
+                            <input type="number" id="age" name="age" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="sex" class="form-label">Sex:</label>
+                            <select id="sex" name="sex" class="form-select" required>
+                                <option value="1">Male</option>
+                                <option value="0">Female</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="cp" class="form-label">Chest Pain Type (CP):</label>
+                            <select id="cp" name="cp" class="form-select" required>
+                                <option value="0">Typical Angina</option>
+                                <option value="1">Atypical Angina</option>
+                                <option value="2">Non-anginal Pain</option>
+                                <option value="3">Asymptomatic</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="trestbps" class="form-label">Resting Blood Pressure:</label>
+                            <input type="number" id="trestbps" name="trestbps" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="chol" class="form-label">Cholesterol:</label>
+                            <input type="number" id="chol" name="chol" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="fbs" class="form-label">Fasting Blood Sugar > 120 mg/dl:</label>
+                            <select id="fbs" name="fbs" class="form-select" required>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="restecg" class="form-label">Resting ECG:</label>
+                            <select id="restecg" name="restecg" class="form-select" required>
+                                <option value="0">Normal</option>
+                                <option value="1">ST-T Wave Abnormality</option>
+                                <option value="2">Left Ventricular Hypertrophy</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="thalach" class="form-label">Max Heart Rate Achieved:</label>
+                            <input type="number" id="thalach" name="thalach" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="exang" class="form-label">Exercise Induced Angina:</label>
+                            <select id="exang" name="exang" class="form-select" required>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="oldpeak" class="form-label">ST Depression (Oldpeak):</label>
+                            <input type="number" id="oldpeak" name="oldpeak" step="0.1" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="slope" class="form-label">Slope of ST Segment:</label>
+                            <select id="slope" name="slope" class="form-select" required>
+                                <option value="0">Upsloping</option>
+                                <option value="1">Flat</option>
+                                <option value="2">Downsloping</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="ca" class="form-label">Number of Major Vessels (0-4):</label>
+                            <input type="number" id="ca" name="ca" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="thal" class="form-label">Thalassemia:</label>
+                            <select id="thal" name="thal" class="form-select" required>
+                                <option value="1">Normal</option>
+                                <option value="2">Fixed Defect</option>
+                                <option value="3">Reversible Defect</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary">Predict</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2 class="info-title">Understanding Heart Disease Risk Factors</h2>
+            
+            <div class="disclaimer">
+                <strong>Disclaimer:</strong> This tool provides a risk assessment based on medical data patterns but is not a substitute for professional medical advice. Consult with a healthcare provider for proper diagnosis and treatment.
+            </div>
+            
+            <div class="row row-cols-1 row-cols-md-3 g-4 mt-4">
+                <div class="col">
+                    <div class="factor-card">
+                        <h3 class="factor-title"><i class="fas fa-calendar-alt"></i> Age</h3>
+                        <p class="factor-description">Age is a significant non-modifiable risk factor. The risk of heart disease increases substantially with age, particularly after 45 for men and 55 for women.</p>
+                        <div class="risk-factor">Higher risk: Above 45 (men), Above 55 (women)</div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="factor-card">
+                        <h3 class="factor-title"><i class="fas fa-venus-mars"></i> Sex</h3>
+                        <p class="factor-description">Men generally have a higher risk of heart disease than premenopausal women. After menopause, women's risk increases to match men's.</p>
+                        <div class="risk-factor">Higher risk: Male, Postmenopausal female</div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="factor-card">
+                        <h3 class="factor-title"><i class="fas fa-heartbeat"></i> Chest Pain Type</h3>
+                        <p class="factor-description">The type of chest pain is crucial for diagnosis. Typical angina (pain caused by reduced blood flow to the heart) is a strong indicator of coronary heart disease.</p>
+                        <div class="risk-factor">Higher risk: Typical angina, Asymptomatic with underlying issues</div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="factor-card">
+                        <h3 class="factor-title"><i class="fas fa-tachometer-alt"></i> Resting Blood Pressure</h3>
+                        <p class="factor-description">Persistent high blood pressure damages arteries and accelerates atherosclerosis, increasing the risk of heart attacks and strokes.</p>
+                        <div class="normal-range">Normal range: Below 120/80 mmHg</div>
+                        <div class="risk-factor">Higher risk: Above 140/90 mmHg</div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="factor-card">
+                        <h3 class="factor-title"><i class="fas fa-oil-can"></i> Cholesterol</h3>
+                        <p class="factor-description">High cholesterol contributes to plaque buildup in arteries. LDL (bad) cholesterol narrows arteries, while HDL (good) cholesterol helps remove LDL.</p>
+                        <div class="normal-range">Normal range: Below 200 mg/dL</div>
+                        <div class="risk-factor">Higher risk: Above 240 mg/dL</div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="factor-card">
+                        <h3 class="factor-title"><i class="fas fa-candy-cane"></i> Fasting Blood Sugar</h3>
+                        <p class="factor-description">Elevated blood sugar levels can damage blood vessels and the nerves that control the heart. Diabetes significantly increases heart disease risk.</p>
+                        <div class="normal-range">Normal range: Below 100 mg/dL</div>
+                        <div class="risk-factor">Higher risk: Above 126 mg/dL (Diabetes)</div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="factor-card">
+                        <h3 class="factor-title"><i class="fas fa-wave-square"></i> Resting ECG</h3>
+                        <p class="factor-description">Electrocardiogram results can reveal abnormalities in heart rhythm, blood supply, or heart muscle damage, which may indicate heart disease even without symptoms.</p>
+                        <div class="risk-factor">Higher risk: ST-T Wave abnormality, Left ventricular hypertrophy</div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="factor-card">
+                        <h3 class="factor-title"><i class="fas fa-running"></i> Max Heart Rate</h3>
+                        <p class="factor-description">Maximum heart rate achieved during exercise can indicate cardiovascular fitness. A lower than expected max heart rate for age may suggest heart problems.</p>
+                        <div class="normal-range">Normal range: ~220 - age</div>
+                        <div class="risk-factor">Higher risk: Significantly lower than age-predicted maximum</div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="factor-card">
+                        <h3 class="factor-title"><i class="fas fa-bolt"></i> Exercise Induced Angina</h3>
+                        <p class="factor-description">Chest pain triggered by physical exertion is a warning sign that the heart muscle isn't getting enough blood during increased demand.</p>
+                        <div class="risk-factor">Higher risk: Presence of exercise-induced angina</div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="factor-card">
+                        <h3 class="factor-title"><i class="fas fa-chart-line"></i> ST Depression (Oldpeak)</h3>
+                        <p class="factor-description">ST segment depression on an ECG during exercise indicates reduced blood flow to the heart. Greater depression suggests more severe ischemia.</p>
+                        <div class="normal-range">Normal range: Near 0 mm</div>
+                        <div class="risk-factor">Higher risk: >2 mm depression</div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="factor-card">
+                        <h3 class="factor-title"><i class="fas fa-mountain"></i> Slope of ST Segment</h3>
+                        <p class="factor-description">The slope of the ST segment during an exercise stress test provides information about the type and severity of cardiac ischemia.</p>
+                        <div class="risk-factor">Higher risk: Flat or downsloping ST segment</div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="factor-card">
+                        <h3 class="factor-title"><i class="fas fa-road"></i> Number of Major Vessels</h3>
+                        <p class="factor-description">The number of major coronary arteries with significant blockage (>50%) as revealed by fluoroscopy. More blocked vessels indicate more extensive heart disease.</p>
+                        <div class="risk-factor">Higher risk: Greater number of vessels with significant blockage</div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="factor-card">
+                        <h3 class="factor-title"><i class="fas fa-microscope"></i> Thalassemia</h3>
+                        <p class="factor-description">Thalassemia is a blood disorder that can affect the heart. In cardiac context, it refers to blood flow abnormalities observed during nuclear stress testing.</p>
+                        <div class="risk-factor">Higher risk: Reversible defect (suggests ischemia)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p class="mb-0">© 2025 CardioSense | Heart Disease Prediction Tool | Not a substitute for professional medical advice</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
